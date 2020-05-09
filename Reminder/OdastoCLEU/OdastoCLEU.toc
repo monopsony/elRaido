@@ -1,0 +1,14 @@
+## Interface: 80000
+## Title: OdastoCLEU
+## Notes: he was a decent shadow priest
+## Author: bad tank
+## Version: v0.1
+## DefaultState: enabled
+## SavedVariables: OdastoCLEUDB
+
+
+libs.xml
+chapter8.lua
+functions.lua
+frames.lua
+options.lua
