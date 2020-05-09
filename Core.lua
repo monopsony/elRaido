@@ -9,8 +9,6 @@ local default_profile={
 	profile={
 		note = {},
 
-
-
 	},-- end of profile
 }--end of default
 
@@ -24,10 +22,7 @@ function eR:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
-
-	
 end
-
 
 
 local chat_commands={

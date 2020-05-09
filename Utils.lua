@@ -8,9 +8,9 @@ local unpack,ipairs,pairs,wipe=unpack,ipairs,pairs,table.wipe
 eR.constants = {}
 local const = eR.constants
 const.colors={
-    ["epic"]={0.64,0.21,0.93},
-    ["epic_hex"]="136207",
-    ['yellow_hex']=''
+	["epic"]={0.64,0.21,0.93},
+	["epic_hex"]="136207",
+	['yellow_hex']=''
 }
 
 -- DEFINE UTILITY FUNCTIONS HERE
@@ -24,18 +24,18 @@ function utils.table_deepcopy(ori)
 	From: http://lua-users.org/wiki/CopyTable
 	]]--
 
-    local ori_type = type(ori)
-    local copy
-    if ori_type == 'table' then
-        copy = {}
-        for ori_key, ori_value in next, ori, nil do
-            copy[deepcopy(ori_key)] = deepcopy(ori_value)
-        end
-        setmetatable(copy, deepcopy(getmetatable(ori)))
-    else -- number, string, boolean, etc
-        copy = ori
-    end
-    return copy
+	local ori_type = type(ori)
+	local copy
+	if ori_type == 'table' then
+		copy = {}
+		for ori_key, ori_value in next, ori, nil do
+			copy[deepcopy(ori_key)] = deepcopy(ori_value)
+		end
+		setmetatable(copy, deepcopy(getmetatable(ori)))
+	else -- number, string, boolean, etc
+		copy = ori
+	end
+	return copy
 end
 
 function utils.table_update(ori, new)
