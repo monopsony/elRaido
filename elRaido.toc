@@ -1,0 +1,11 @@
+## Interface: 70100
+## Title: elRaido
+## DefaultState: enabled
+## SavedVariables: elRaidoDB
+
+libs.xml
+Core.lua
+Utils.lua
+
+
+Note/notes.xml
