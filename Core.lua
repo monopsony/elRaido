@@ -1,26 +1,33 @@
 elRaidoAddon=LibStub("AceAddon-3.0"):NewAddon("elRaidoAddon","AceConsole-3.0",
 	"AceComm-3.0","AceEvent-3.0","AceSerializer-3.0")
 local eR=elRaidoAddon
-local unpack,ipairs,pairs,wipe=unpack,ipairs,pairs,table.wipe
+local unpack, ipairs, pairs, wipe=unpack, ipairs, pairs, table.wipe
 
 eR.version='0.1'
 
 local default_profile={
 	profile={
+		note = {},
+
+
+
 	},-- end of profile
 }--end of default
 
 
+
 function eR:OnInitialize()
-	
-	self.db=LibStub("AceDB-3.0"):New("elRaidoAddonDB", defaults, true)  
+	self.db=LibStub("AceDB-3.0"):New("elRaidoAddonDB", default_profile, true)  
 	--true sets the default profile to a profile called "Default"
 	--see https://www.wowace.com/projects/ace3/pages/api/ace-db-3-0
 	
 	self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
+
+	
 end
+
 
 
 local chat_commands={
