@@ -23,6 +23,9 @@ function el:ApplyAttributes()
 	self:SetPoint()
 	self:SetSize()
 	self:SetColor()	
+	self:SetAlpha()
+
+	
 end
 
 function el:SetColor(r, g, b)
@@ -42,5 +45,6 @@ function el:SetColor(r, g, b)
 	local r, g, b = att.color_r, att.color_g, att.color_b
 
 
-	self.frame.texture:SetColorTexture(r, b, g)
+	self.frame.texture:SetColorTexture(r, g, b)
 end
+

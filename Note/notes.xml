@@ -5,4 +5,5 @@
 
 
 	<Script file="Note\Elements\element_square.lua"/>
+	<Script file="Note\Elements\element_text.lua"/>
 </Ui>

@@ -63,7 +63,6 @@ function basic_element:SetSize(w, h)
 	self.frame:SetSize(w, h)
 end
 
-
 function basic_element:SetPoint(x, y)
 	local att = self.attributes
 	if x and y then att.x, att.y = x, y end
@@ -71,4 +70,11 @@ function basic_element:SetPoint(x, y)
 
 	self.frame:ClearAllPoints()
 	self.frame:SetPoint('CENTER', note.main_frame, 'BOTTOMLEFT', x, y)
+end
+
+function basic_element:SetAlpha(a)
+	if a then self.attributes.alpha = a end
+	a = self.attributes.alpha
+
+	self.frame:SetAlpha(a)
 end
