@@ -25,15 +25,7 @@ function el:Init()
 	self.frame.text:SetMultiLine(true)
 	self.frame.text:SetAllPoints()
 	self.frame.text:SetAutoFocus(false)
-
-	self.frame.display_text = CreateFrame("ScrollingMessageFrame", nil, self.frame)
-	self.frame.display_text:SetAllPoints()
-	self.frame.display_text:SetFading(false)
-	self.frame.display_text:SetIndentedWordWrap(true)
-	self.frame.display_text:SetHyperlinksEnabled(false)
-	self.frame.display_text:SetJustifyH("LEFT")
-	self.frame.display_text:SetJustifyV("TOP")
-	self.frame.display_text:SetInsertMode(SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP)
+	self.frame.text.parent = self
 
 	-- set events
 	local text = self.frame.text
@@ -41,15 +33,18 @@ function el:Init()
 		local shift = IsShiftKeyDown()
 		if shift then 
 			text:Insert('\n')
-			local s = text:GetText()
-			print(s)
-			text:SetText(s)
 		else
-			text:ClearFocus()
+			text.parent:SetDisplayMode()
 		end
 	end)
 
 	text:SetScript('OnEscapePressed', text.ClearFocus)
+	text:SetScript('OnEditFocusGained', function(text)
+		text.parent:SetEditMode()
+	end)
+	text:SetScript('OnEditFocusLost', function(text)
+		text.parent:SetDisplayMode()
+	end)
 end
 
 function el:ClearFocus()
@@ -72,7 +67,6 @@ function el:SetFont(font, size)
 	font, size = att.font, att.fontsize
 
 	self.frame.text:SetFont(font, size)
-	self.frame.display_text:SetFont(font, size)
 end
 
 function el:SetColor(r, g, b, a)
@@ -100,12 +94,20 @@ function el:SetAlpha(a)
 	self:_ApplyBackgroundColor()
 end
 
+function el:SetDisplayMode()
+	self:ClearFocus()
+	self:SetText()
+end
+
+function el:SetEditMode()
+	local text = self.attributes.text
+	self.frame.text:SetText(text:gsub('|', '||'))
+	self.frame.text:SetFocus()
+end
+
 function el:SetText(s)
 	if s then self.attributes.text = s end
 	s = self.attributes.text 
-	print('adding message')
-	print(s)
-	self.frame.display_text:Clear()
-	self.frame.display_text:AddMessage(s)
+	self.frame.text:SetText(s)
 end
 
