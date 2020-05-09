@@ -2,25 +2,30 @@ local eR = elRaidoAddon
 local note = eR.note
 local bps = note.element_blueprints
 
-bps.square = {}
-local el = bps.square
+bps.rectangle = {}
+local el = bps.rectangle
 
 -- attributes on top of the basic element ones
 el.extra_attributes = {
-
+	typ = 'rectangle',
 }
 
-function el:init()
+function el:Init()
 	--[[
 	Will be called upon creation
 	]]--
 
-	-- self.texture = self:CreateTexture(nil, "BACKGROUND")
-	-- self.texture:SetAllPoints()
+	self.frame.texture = self.frame:CreateTexture(nil, "BACKGROUND")
+	self.frame.texture:SetAllPoints()
 end
 
+function el:ApplyAttributes()
+	self:SetPoint()
+	self:SetSize()
+	self:SetColor()	
+end
 
-function el:SetColor(c)
+function el:SetColor(r, g, b)
 	--[[
 	Sets the color of the element. Here: changes color of .texture only.
 	If c is given, changes the element attributes and then sets the color. If 
@@ -30,10 +35,12 @@ function el:SetColor(c)
 		c (table) -- Table containing .r .g .b values.
 	]]--
 
+	local att = self.attributes
+	if r and g and b then
+		att.color_r, att.color_g, att.color_b = r, g, b
+	end
+	local r, g, b = att.color_r, att.color_g, att.color_b
 
-	if c then self.attributes.c = c end
 
-	local c = self.attributes.c
-	local r, b, g, a = c.r, c.b, c.g, c.a or 1
-	self:SetColorTexture(r, b, g, a)
+	self.frame.texture:SetColorTexture(r, b, g)
 end

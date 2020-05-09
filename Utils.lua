@@ -29,9 +29,9 @@ function utils.table_deepcopy(ori)
 	if ori_type == 'table' then
 		copy = {}
 		for ori_key, ori_value in next, ori, nil do
-			copy[deepcopy(ori_key)] = deepcopy(ori_value)
+			copy[utils.table_deepcopy(ori_key)] = utils.table_deepcopy(ori_value)
 		end
-		setmetatable(copy, deepcopy(getmetatable(ori)))
+		
 	else -- number, string, boolean, etc
 		copy = ori
 	end
