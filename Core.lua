@@ -7,7 +7,10 @@ eR.version='0.1'
 
 local default_profile={
 	profile={
-		note = {},
+		note = {
+			main_frame_w = 500,
+			main_frame_h = 500,
+		},
 
 	},-- end of profile
 }--end of default
@@ -15,13 +18,20 @@ local default_profile={
 
 
 function eR:OnInitialize()
-	self.db=LibStub("AceDB-3.0"):New("elRaidoAddonDB", default_profile, true)  
+	self.db=LibStub("AceDB-3.0"):New("elRaidoAddonDB", default_profile, true) 
 	--true sets the default profile to a profile called "Default"
 	--see https://www.wowace.com/projects/ace3/pages/api/ace-db-3-0
 	
+	self.para = self.db.profile
 	self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
+
+
+	-- note
+	self.note.para = self.para.note
+	self.note:create_main_frame()
+	self.note:create_selection_frame()
 end
 
 

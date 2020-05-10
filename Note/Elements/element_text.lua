@@ -38,11 +38,21 @@ function el:Init()
 		end
 	end)
 
-	text:SetScript('OnEscapePressed', text.ClearFocus)
+	text:SetScript('OnEscapePressed', function(text)
+		-- SetDisplayMode will trigger a OnEditFocusLost
+		-- Which saves the text
+		-- So you first need to reset it
+		text:SetText(text.parent.text_previous)
+
+		text.parent:SetDisplayMode()
+	end)
+
 	text:SetScript('OnEditFocusGained', function(text)
 		text.parent:SetEditMode()
 	end)
+
 	text:SetScript('OnEditFocusLost', function(text)
+		text.parent:SaveText()
 		text.parent:SetDisplayMode()
 	end)
 end
@@ -94,15 +104,23 @@ function el:SetAlpha(a)
 	self:_ApplyBackgroundColor()
 end
 
+function el:SaveText()
+	local t = self.frame.text:GetText()
+	self.attributes.text = t:gsub('||', '|')
+end
+
 function el:SetDisplayMode()
 	self:ClearFocus()
 	self:SetText()
+	self:Lower()
 end
 
 function el:SetEditMode()
 	local text = self.attributes.text
+	self.text_previous = text
 	self.frame.text:SetText(text:gsub('|', '||'))
 	self.frame.text:SetFocus()
+	self:Raise()
 end
 
 function el:SetText(s)
@@ -110,4 +128,14 @@ function el:SetText(s)
 	s = self.attributes.text 
 	self.frame.text:SetText(s)
 end
+
+function el:Click()
+	-- pass
+end
+
+
+function el:DoubleClick()
+	self:SetEditMode()
+end
+
 
