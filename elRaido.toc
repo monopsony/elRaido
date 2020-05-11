@@ -9,3 +9,4 @@ Utils.lua
 
 
 Note/notes.xml
+Reminder/reminder.xml
