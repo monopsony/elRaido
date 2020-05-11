@@ -1,83 +1,83 @@
 local eR = elRaidoAddon
 
 eR.note = {
-	element_blueprints = {},
+	elementBlueprints = {},
+	UI = {},
 }
 
 local note = eR.note
 
-function note:create_main_frame()
+function note:createMainFrame()
 	-- Create basic note frame (toad)
-	note.main_frame = CreateFrame('Frame', 'elRaidoNoteMainFrame', UIParent)
+	note.mainFrame = CreateFrame('Frame', 'elRaidoNoteMainFrame', UIParent)
 
 
-	note.main_frame:SetSize(self.para.main_frame_w, self.para.main_frame_h)
-	note.main_frame:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 250, 500)
-	note.main_frame:SetClipsChildren(true)
+	note.mainFrame:SetSize(self.para.mainFrameWidth, self.para.mainFrameHeight)
+	note.mainFrame:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 250, 500)
+	note.mainFrame:SetClipsChildren(true)
 
-	local mf = note.main_frame
+	local mf = note.mainFrame
 	mf.texture = mf:CreateTexture(nil, "BACKGROUND")
 	mf.texture:SetColorTexture(0, 0, 0, 0.2)
 	mf.texture:SetAllPoints()
 
 
 	-- add clicker 
-	note.main_frame_click_handler = CreateFrame('Button', 
-		'elRaidoMainFrameClickHandler', note.main_frame)
-	local ch = note.main_frame_click_handler
+	note.mainFrameClickHandler = CreateFrame('Button', 
+		'elRaidoMainFrameClickHandler', note.mainFrame)
+	local ch = note.mainFrameClickHandler
 	ch:SetAllPoints()
-	ch:SetFrameLevel(note.main_frame:GetFrameLevel() + 10)
-	ch:SetScript('OnClick', function(ch, ...) note:Click(...) end)
-	ch:SetScript('OnDoubleClick', function(ch, ...) note:DoubleClick(...) end)
+	ch:SetFrameLevel(note.mainFrame:GetFrameLevel() + 10)
+	ch:SetScript('OnClick', function(ch, ...) note:click(...) end)
+	ch:SetScript('OnDoubleClick', function(ch, ...) note:doubleClick(...) end)
 
 	ch:RegisterForClicks("AnyUp")
 end
 
-
 function note:GetMainFramePosition()
-	local x, y = self.main_frame:GetLeft(), self.main_frame:GetBottom()
+	local x, y = self.mainFrame:GetLeft(), self.mainFrame:GetBottom()
 	return x, y
 end
 
-local function sizer_OnDragStart(sizer)
+local function sizerOnDragStart(sizer)
 	local direction = sizer.direction
 	local sf = sizer.parent
 
-	local el = sf.selected_element
-	el:PrepareResize(direction)
+	local el = sf.selectedElement
+	el:prepareResize(direction)
 end
 
-local function sizer_OnDragStop(sizer)
+local function sizerOnDragStop(sizer)
 	local direction = sizer.direction
 	local sf = sizer.parent
 
-	local el = sf.selected_element
+	local el = sf.selectedElement
 	el.frame:StopMovingOrSizing()
-	el:UpdateCurrentPosition()
-	el:UpdateCurrentSize()
+	el:updateCurrentPosition()
+	el:updateCurrentSize()
 end
 
 
-function note:create_selection_frame()
-	self.selection_frame = CreateFrame(
-		"Button", 'elRaidoNoteSelectionFrame', self.main_frame)
+function note:createSelectionFrame()
+	self.selectionFrame = CreateFrame(
+		"Button", 'elRaidoNoteSelectionFrame', self.mainFrame)
 
-	local sf = self.selection_frame
-	sf:SetFrameLevel(note.main_frame_click_handler:GetFrameLevel() + 1)
-	eR.utils.apply_border_to_frame(sf)
+	local sf = self.selectionFrame
+	sf:SetFrameLevel(note.mainFrameClickHandler:GetFrameLevel() + 1)
+	eR.utils.applyBorderToFrame(sf)
 
 	sf:RegisterForDrag("LeftButton")
 	sf:SetScript("OnDragStart", function(sf) 
-		sf.selected_element.frame:StartMoving() 
+		sf.selectedElement.frame:StartMoving() 
 	end)
 	sf:SetScript("OnDragStop", function(sf) 
-		sf.selected_element.frame:StopMovingOrSizing()
-		sf.selected_element:UpdateCurrentPosition()
+		sf.selectedElement.frame:StopMovingOrSizing()
+		sf.selectedElement:updateCurrentPosition()
 	end)
 	sf:SetScript('OnClick', function(sf)
-		local el = sf.selected_element
+		local el = sf.selectedElement
 		if not el then return end
-		if el.DoubleClick then el:DoubleClick() end
+		if el.doubleClick then el:doubleClick() end
 	end)
 
 
@@ -100,9 +100,26 @@ function note:create_selection_frame()
 		sizer.texture:SetAllPoints()
 		sizer.texture:SetColorTexture(1,1,1)
 
-		sizer:SetScript("OnDragStart", sizer_OnDragStart)
-		sizer:SetScript("OnDragStop", sizer_OnDragStop)
+		sizer:SetScript("OnDragStart", sizerOnDragStart)
+		sizer:SetScript("OnDragStop", sizerOnDragStop)
 	end
-
 end
 
+function note:DisableEdit()
+	note.mainFrameClickHandler:Hide()
+	for k,v in pairs(note.activeElements) do
+		if v.toggleEdit then v:toggleEdit(false) end
+	end
+
+	note:Deselect()
+	-- makes sure there's no selection frame left 
+end
+
+function note:EnableEdit()
+	note.mainFrameClickHandler:Show()
+	for k,v in pairs(note.activeElements) do
+		if v.toggleEdit then v:toggleEdit(true) end
+	end
+
+	note.selectionFrame:Show()
+end

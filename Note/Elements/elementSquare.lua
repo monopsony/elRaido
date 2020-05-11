@@ -1,16 +1,16 @@
 local eR = elRaidoAddon
 local note = eR.note
-local bps = note.element_blueprints
+local bps = note.elementBlueprints
 
 bps.rectangle = {}
 local el = bps.rectangle
 
 -- attributes on top of the basic element ones
-el.extra_attributes = {
+el.extraAttributes = {
 	typ = 'rectangle',
 }
 
-function el:Init()
+function el:init()
 	--[[
 	Will be called upon creation
 	]]--
@@ -19,16 +19,16 @@ function el:Init()
 	self.frame.texture:SetAllPoints()
 end
 
-function el:ApplyAttributes()
-	self:SetPoint()
-	self:SetSize()
-	self:SetColor()	
-	self:SetAlpha()
+function el:applyAttributes()
+	self:setPoint()
+	self:setSize()
+	self:setColor()	
+	self:setAlpha()
 
 	
 end
 
-function el:SetColor(r, g, b)
+function el:setColor(r, g, b)
 	--[[
 	Sets the color of the element. Here: changes color of .texture only.
 	If c is given, changes the element attributes and then sets the color. If 
@@ -40,9 +40,9 @@ function el:SetColor(r, g, b)
 
 	local att = self.attributes
 	if r and g and b then
-		att.color_r, att.color_g, att.color_b = r, g, b
+		att.colorR, att.colorG, att.colorB = r, g, b
 	end
-	local r, g, b = att.color_r, att.color_g, att.color_b
+	local r, g, b = att.colorR, att.colorG, att.colorB
 
 
 	self.frame.texture:SetColorTexture(r, g, b)

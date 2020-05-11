@@ -1,26 +1,26 @@
 local eR=elRaidoAddon
 local note = eR.note
-local bps = note.element_blueprints
-local t_update, t_deepcopy = eR.utils.table_update, eR.utils.table_deepcopy
+local bps = note.elementBlueprints
+local tUpdate, tDeepCopy = eR.utils.tableUpdate, eR.utils.tableDeepCopy
 
-note.tool_handlers = {}
+note.toolHandlers = {}
 
-function note:SetTool(tool)
+function note:setTool(tool)
 	if not tool then
 		eR.log.error('Tried to equip tool but nil')
 		return
-	elseif not self.tool_handlers[tool] then
+	elseif not self.toolHandlers[tool] then
 		eR.log.error(('Tried to equip tool but no handler found for %s tool')
 			:format(tool))
 		return
 	end
 
-	note.tool = note.tool_handlers[tool]
+	note.tool = note.toolHandlers[tool]
 
 	if note.tool.OnEquip then note.tool.OnEquip(note) end
 end
 
-function note:GetCursorRelativePos()
+function note:getCursorRelativePos()
 	local scale = UIParent:GetScale()
 	local x, y = GetCursorPosition()
 	x, y = x/scale, y/scale
@@ -29,34 +29,34 @@ function note:GetCursorRelativePos()
 	return xr, yr
 end
 
-function note:Click(button, down)
+function note:click(button, down)
 	local tool = self.tool
 	if button == 'RightButton' then
-		self:SetTool('selection')
+		self:setTool('selection')
 		return
 	end
 	if not tool then eR.log.error('No tool equipped, how?'); return end
 
-	if self.tool.OnClick and button == 'LeftButton' then 
-		self.tool.OnClick(note)
+	if self.tool.onClick and button == 'LeftButton' then 
+		self.tool.onClick(note)
 	--elseif self.tool.OnRightClick and button == 'RightButton' then 
 	--	self.tool.OnRightClick(note)
 	end
 end
 
-function note:DoubleClick(button, down)
+function note:doubleClick(button, down)
 	local tool = self.tool
 	if not tool then eR.log.error('No tool equipped, how?'); return end
 
-	if self.tool.OnDoubleClick and button == 'LeftButton' then
-		self.tool.OnDoubleClick(note) 
+	if self.tool.onDoubleClick and button == 'LeftButton' then
+		self.tool.onDoubleClick(note) 
 	end
 end
 
 local MouseIsOver = MouseIsOver
-function note:FindMouseoverElement()
+function note:findMouseoverElement()
 
-	for k,v in ipairs(self.active_elements) do
+	for k,v in ipairs(self.activeElements) do
 		if MouseIsOver(v.frame) then
 			return k,v
 		end
@@ -65,7 +65,7 @@ function note:FindMouseoverElement()
 	return nil, nil
 end
 
-function note:Select(i)
+function note:select(i)
 	local i, el = i, nil
 
 	-- is i an index?
@@ -74,18 +74,29 @@ function note:Select(i)
 		return 
 	end
 
-	el = self.active_elements[i]
+	el = self.activeElements[i]
 	if not el then 
 		eR.log.error(('Tried selecting element %i, not found'):format(i))
 		return 
 	end
 
-	self.selected_index = i
+	self.selectedIndex = i
 
-	local sel_frame = self.selection_frame
-	sel_frame.selected_index = i
-	sel_frame.selected_element = el
-	sel_frame:ClearAllPoints()
-	sel_frame:SetPoint('TOPLEFT', el.frame, 'TOPLEFT')
-	sel_frame:SetPoint('BOTTOMRIGHT', el.frame, 'BOTTOMRIGHT')
+	local selFrame = self.selectionFrame
+	selFrame.selectedIndex = i
+	selFrame.selectedElement = el
+	selFrame:ClearAllPoints()
+	selFrame:SetPoint('TOPLEFT', el.frame, 'TOPLEFT')
+	selFrame:SetPoint('BOTTOMRIGHT', el.frame, 'BOTTOMRIGHT')
+end
+
+function note:Deselect()
+	local selFrame = self.selectionFrame
+	selFrame.selectedIndex = nil
+	selFrame.selectedElement = nil
+	selFrame:ClearAllPoints()
+	selFrame:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', -10, 0)
+	selFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMLEFT', -10, 0)
+	-- puts it out of screen
+	-- dont ask me why ClearAllPoints doesnt work on its own
 end

@@ -1,19 +1,19 @@
 local eR = elRaidoAddon
 local note = eR.note
-local bps = note.element_blueprints
+local bps = note.elementBlueprints
 
 bps.text = {}
 local el = bps.text
 
 -- attributes on top of the basic element ones
-el.extra_attributes = {
+el.extraAttributes = {
 	typ = 'text',
 	fontsize = 12,
 	font = "Fonts\\FRIZQT__.TTF",
 	text = '',
 }
 
-function el:Init()
+function el:init()
 	--[[
 	Will be called upon creation
 	]]--
@@ -34,42 +34,42 @@ function el:Init()
 		if shift then 
 			text:Insert('\n')
 		else
-			text.parent:SetDisplayMode()
+			text.parent:setDisplayMode()
 		end
 	end)
 
 	text:SetScript('OnEscapePressed', function(text)
-		-- SetDisplayMode will trigger a OnEditFocusLost
+		-- setDisplayMode will trigger a OnEditFocusLost
 		-- Which saves the text
 		-- So you first need to reset it
-		text:SetText(text.parent.text_previous)
+		text:SetText(text.parent.textPrevious)
 
-		text.parent:SetDisplayMode()
+		text.parent:setDisplayMode()
 	end)
 
 	text:SetScript('OnEditFocusGained', function(text)
-		text.parent:SetEditMode()
+		text.parent:setEditMode()
 	end)
 
 	text:SetScript('OnEditFocusLost', function(text)
-		text.parent:SaveText()
-		text.parent:SetDisplayMode()
+		text.parent:saveText()
+		text.parent:setDisplayMode()
 	end)
 end
 
-function el:ClearFocus()
+function el:clearFocus()
 	self.frame.text:ClearFocus()
 end
 
-function el:ApplyAttributes()
-	self:SetPoint()
-	self:SetSize()
-	self:SetFont()
-	self:SetText()
-	self:_ApplyBackgroundColor()
+function el:applyAttributes()
+	self:setPoint()
+	self:setSize()
+	self:setFont()
+	self:setText()
+	self:applyBackgroundColor()
 end
 
-function el:SetFont(font, size)
+function el:setFont(font, size)
 	local att = self.attributes
 	if font and size then 
 		att.font, att.fontsize = font, size
@@ -79,63 +79,66 @@ function el:SetFont(font, size)
 	self.frame.text:SetFont(font, size)
 end
 
-function el:SetColor(r, g, b, a)
+function el:setColor(r, g, b, a)
 	local att = self.attributes
 	if r and g and b then
-		att.color_r = r
-		att.color_g = g
-		att.color_b = b
+		att.colorR = r
+		att.colorG = g
+		att.colorB = b
 	end
 
-	self:_ApplyBackgroundColor()
+	self:applyBackgroundColor()
 end
 
-function el:_ApplyBackgroundColor()
+function el:applyBackgroundColor()
 	local att = self.attributes
-	local r = att.color_r
-	local g = att.color_g
-	local b = att.color_b
+	local r = att.colorR
+	local g = att.colorG
+	local b = att.colorB
 	local a = att.alpha
 	self.frame.bg:SetColorTexture(r, g, b, a)
 end
 
-function el:SetAlpha(a)
+function el:setAlpha(a)
 	if a then self.attributes.alpha = a end
-	self:_ApplyBackgroundColor()
+	self:applyBackgroundColor()
 end
 
-function el:SaveText()
+function el:saveText()
 	local t = self.frame.text:GetText()
 	self.attributes.text = t:gsub('||', '|')
 end
 
-function el:SetDisplayMode()
+function el:setDisplayMode()
 	self:ClearFocus()
 	self:SetText()
 	self:Lower()
 end
 
-function el:SetEditMode()
+function el:setEditMode()
 	local text = self.attributes.text
-	self.text_previous = text
+	self.textPrevious = text
 	self.frame.text:SetText(text:gsub('|', '||'))
 	self.frame.text:SetFocus()
 	self:Raise()
 end
 
-function el:SetText(s)
+function el:toggleEdit(boo)
+	self.frame.text:EnableMouse(boo)
+end
+
+function el:setText(s)
 	if s then self.attributes.text = s end
 	s = self.attributes.text 
 	self.frame.text:SetText(s)
 end
 
-function el:Click()
+function el:click()
 	-- pass
 end
 
-
-function el:DoubleClick()
-	self:SetEditMode()
+function el:doubleClick()
+	self:setEditMode()
 end
 
 

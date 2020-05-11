@@ -3,9 +3,11 @@
 	<Script file="Note\main.lua"/>
 
 	<Script file="Note\Elements.lua"/>
-	<Script file="Note\Elements\element_square.lua"/>
-	<Script file="Note\Elements\element_text.lua"/>
+	<Script file="Note\Elements\elementSquare.lua"/>
+	<Script file="Note\Elements\elementText.lua"/>
 
 	<Script file="Note\Tools.lua"/>
-	<Script file="Note\Tools\tool_selection.lua"/>
+	<Script file="Note\Tools\toolSelection.lua"/>
+
+	<Script file="Note\Interface.lua"/>
 </Ui>

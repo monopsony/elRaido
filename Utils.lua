@@ -7,11 +7,9 @@ local unpack,ipairs,pairs,wipe=unpack,ipairs,pairs,table.wipe
 
 eR.constants = {}
 local const = eR.constants
-const.colors={
-	["epic"]={0.64,0.21,0.93},
-	["epic_hex"]="136207",
-	['yellow_hex']=''
+const.COLORS={
 }
+
 const.POINTS = {
 	"RIGHT",
 	"TOPRIGHT",
@@ -38,18 +36,18 @@ const.OPP_POINTS = {
 eR.utils = {}
 local utils = eR.utils
 
-function utils.table_deepcopy(ori)
+function utils.tableDeepCopy(ori)
 	--[[
 	Returns a deep copy of a given table
 	From: http://lua-users.org/wiki/CopyTable
 	]]--
 
-	local ori_type = type(ori)
+	local oriType = type(ori)
 	local copy
-	if ori_type == 'table' then
+	if oriType == 'table' then
 		copy = {}
-		for ori_key, ori_value in next, ori, nil do
-			copy[utils.table_deepcopy(ori_key)] = utils.table_deepcopy(ori_value)
+		for oriKey, oriValue in next, ori, nil do
+			copy[utils.tableDeepCopy(oriKey)] = utils.tableDeepCopy(oriValue)
 		end
 		
 	else -- number, string, boolean, etc
@@ -58,7 +56,7 @@ function utils.table_deepcopy(ori)
 	return copy
 end
 
-function utils.table_update(ori, new)
+function utils.tableUpdate(ori, new)
 	--[[
 	Adds all non-table elements of table 'new' to table 'ori' 
 	Function works inplace but also returns ori for simplicity
@@ -73,7 +71,7 @@ function utils.table_update(ori, new)
 	return ori
 end
 
-function utils.apply_border_to_frame(frame, width, r, g, b)
+function utils.applyBorderToFrame(frame, width, r, g, b)
 	if not frame then return end
 	local w, r, g, b = width or 2, r or 1, g or 1, b or 1
 	local new = false
@@ -109,11 +107,11 @@ function utils.apply_border_to_frame(frame, width, r, g, b)
 		v:SetColorTexture(r, g, b)
 	end
 
-	frame.show_hide_border = utils.show_hide_border
+	frame.showHideBorder = utils.showHideBorder
 	print('finished applying')
 end	
 
-function utils:show_hide_border(boo)
+function utils:showHideBorder(boo)
 	if not self.borders then return end
 	for k,v in pairs(self.borders) do
 		if boo then v:Show() else v:Hide() end
@@ -130,16 +128,16 @@ function log.error(s)
 	print(('Error: %s'):format(s))
 end
 
-local key_messages = {
+local keyMessages = {
 	help = 'This is the help message',
 }
 
-function log.user_message(s)
+function log.userMessage(s)
 	if not s then return end
 	local msg
 
-	if key_messages[s] then
-		msg = key_messages[s]
+	if keyMessages[s] then
+		msg = keyMessages[s]
 	else
 		msg = s
 	end
