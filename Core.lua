@@ -10,7 +10,34 @@ local defaultProfile={
 		note = {
 			mainFrameWidth = 500,
 			mainFrameHeight = 500,
-		},
+
+			notes = {
+				noteTest1 = {
+					-- meta info here?
+					elements = {
+
+					}, -- end of note.notes.noteTest1.elements
+				}, -- end of note.notes.noteTest1
+
+
+				noteTest2 = {
+					-- meta info here?
+					elements = {
+
+					}, -- end of note.notes.noteTest2.elements
+				}, -- end of note.notes.noteTest2
+
+				noteTest3 = {
+					-- meta info here?
+					elements = {
+
+					}, -- end of note.notes.noteTest3.elements
+				}, -- end of note.notes.noteTest3
+
+			}, -- end of note.notes
+		}, -- end of note
+
+
 
 	},-- end of profile
 }--end of default
@@ -32,16 +59,25 @@ function eR:OnInitialize()
 	self.note.para = self.para.note
 	self.note:createMainFrame()
 	self.note:createSelectionFrame()
-	self.note:createUI()
+	--self.note:createUI() -- It's AceGUI so you need to do it everytime
 end
 
 
-local chatCommand={
-	["help"]=function(self, msg)
+local chatCommand = {
+	["help"] = function(self, msg)
 		eR.log.userMessage("help")
 	end,
 
-	["metatable"]={__index=function(self,key) return self["help"] end},
+	["notes"] = function(self, msg)
+		local UI = eR.note.UI
+		if UI.containerFrame and UI.containerFrame:IsShown() then
+			eR.note.UI.containerFrame:Hide()
+		else
+			eR.note.createUI()
+		end
+	end,
+
+	["metatable"] = {__index=function(self,key) return self["help"] end},
 }
 setmetatable(chatCommand,chatCommand.metatable)
 

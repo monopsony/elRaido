@@ -7,7 +7,24 @@ local unpack,ipairs,pairs,wipe=unpack,ipairs,pairs,table.wipe
 
 eR.constants = {}
 local const = eR.constants
-const.COLORS={
+const.COLORS = {
+	PALE_YELLOW = {1, .96, .41},
+	BLUE_HIGHLIGHT = {0.2, 0.4, 0.8},
+}
+
+const.TEXTURES = {
+	GREY_HIGHLIGHT = "Interface\\Buttons\\UI-Listbox-Highlight2",
+	YELLOW_HIGHLIGHT = "Interface\\Buttons\\UI-Listbox-Highlight",
+	BLUE_MOUSE_HIGHLIGHT = "Interface\\Buttons\\UI-Common-MouseHilight",
+	THIN_BLUE_HIGHLIGHT = "Interface\\Buttons\\UI-SILVER-BUTTON-HIGHLIGHT",
+
+	ACE_GUI_HIGHLIGHT = "Interface\\QUESTFRAME\\UI-QuestLogTitleHighlight",
+
+	BLUE_GRADIENT_FADED = "Interface\\Buttons\\BlueGrad64_faded",
+	BLUE_GRADIENT = "Interface\\Buttons\\BLUEGRAD64",	
+
+	NOTE_FULL_YELLOW = "Interface\\Buttons\\UI-GuildButton-PublicNote-Up",
+	NOTE_FULL_GREY = "Interface\\Buttons\\UI-GuildButton-PublicNote-Disabled",
 }
 
 const.POINTS = {
