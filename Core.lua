@@ -8,23 +8,25 @@ eR.version='0.1'
 local default_profile={
 	profile={
 		note = {},
-
-
-
+		reminder={ registeredSubevent={},
+				   remindersCLEU = { numReminders = 0, },
+				   settings = {numReminders = 0}
+				   },
 	},-- end of profile
 }--end of default
 
 
 
 function eR:OnInitialize()
-	self.db=LibStub("AceDB-3.0"):New("elRaidoAddonDB", default_profile, true)  
+	--self.db=LibStub("AceDB-3.0"):New("elRaidoAddonDB", default_profile, true)  
+	self.db=LibStub("AceDB-3.0"):New("elRaidoDB", default_profile, true)
 	--true sets the default profile to a profile called "Default"
 	--see https://www.wowace.com/projects/ace3/pages/api/ace-db-3-0
 	
 	self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
-
+	
 	
 end
 
@@ -62,4 +64,6 @@ function event_frame:handle_event(event,...)
 	-- handle main events here
 end
 event_frame:SetScript('OnEvent',event_frame.handle_event)
+
+
 
