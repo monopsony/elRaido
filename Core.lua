@@ -45,6 +45,7 @@ local defaultProfile={
 
 
 function eR:OnInitialize()
+	local AceConfig = LibStub("AceConfig-3.0")
 	self.db=LibStub("AceDB-3.0"):New("elRaidoAddonDB", defaultProfile, true) 
 	--true sets the default profile to a profile called "Default"
 	--see https://www.wowace.com/projects/ace3/pages/api/ace-db-3-0
@@ -56,6 +57,7 @@ function eR:OnInitialize()
 
 
 	-- note
+	AceConfig:RegisterOptionsTable("elRaidoNotes", eR.note.UI.optionsTable)
 	self.note.para = self.para.note
 	self.note:createMainFrame()
 	self.note:createSelectionFrame()

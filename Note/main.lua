@@ -6,6 +6,11 @@ eR.note = {
 }
 
 local note = eR.note
+local frameBackdrop  = {
+	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+	tile = true, tileSize = 16, edgeSize = 16,
+	insets = { left = 3, right = 3, top = 5, bottom = 3 }
+}
 
 function note:createMainFrame()
 	-- Create basic note frame (toad)
@@ -32,10 +37,17 @@ function note:createMainFrame()
 	ch:SetScript('OnDoubleClick', function(ch, ...) note:doubleClick(...) end)
 
 	ch:RegisterForClicks("AnyUp")
+
+	mf.border = CreateFrame('Frame', 'elRaidoNoteMainFrameBorder', mf)
+	mf.border:SetAllPoints()
+	mf.border:SetBackdrop(frameBackdrop)
+	mf.border:Hide()
+
+	--note:createToolbox()
 end
 
 function note:GetMainFramePosition()
-	local x, y = self.mainFrame:GetLeft(), self.mainFrame:GetBottom()
+	local x, y = self.mainFrame:GetLeft(), self.mainFrame:GetTop()
 	return x, y
 end
 
@@ -105,21 +117,38 @@ function note:createSelectionFrame()
 	end
 end
 
-function note:DisableEdit()
+function note:disableEdit()
 	note.mainFrameClickHandler:Hide()
 	for k,v in pairs(note.activeElements) do
 		if v.toggleEdit then v:toggleEdit(false) end
 	end
 
-	note:Deselect()
+	note:deselect()
+	note.mainFrame.border:Hide()
 	-- makes sure there's no selection frame left 
 end
 
-function note:EnableEdit()
+function note:enableEdit()
 	note.mainFrameClickHandler:Show()
 	for k,v in pairs(note.activeElements) do
 		if v.toggleEdit then v:toggleEdit(true) end
 	end
 
 	note.selectionFrame:Show()
+	note.mainFrame.border:Show()
+	note:attachToOptionsFrame()
+
+end
+
+function note:resetPosition()
+	note.mainFrame:ClearAllPoints()
+	-- toad
+end
+
+function note:attachToOptionsFrame()
+	if note.UI.optionsFrame then 
+		note.mainFrame:ClearAllPoints()
+		local frame = note.UI.optionsFrame.frame
+		note.mainFrame:SetPoint("TOPLEFT", frame, "TOPRIGHT")
+	end
 end

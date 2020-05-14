@@ -16,6 +16,7 @@ function note:setTool(tool)
 	end
 
 	note.tool = note.toolHandlers[tool]
+	self.UI.refreshNotesWindow()
 
 	if note.tool.OnEquip then note.tool.OnEquip(note) end
 end
@@ -32,7 +33,7 @@ end
 function note:click(button, down)
 	local tool = self.tool
 	if button == 'RightButton' then
-		self:setTool('selection')
+		self:setTool('Selection')
 		return
 	end
 	if not tool then eR.log.error('No tool equipped, how?'); return end
@@ -90,7 +91,7 @@ function note:select(i)
 	selFrame:SetPoint('BOTTOMRIGHT', el.frame, 'BOTTOMRIGHT')
 end
 
-function note:Deselect()
+function note:deselect()
 	local selFrame = self.selectionFrame
 	selFrame.selectedIndex = nil
 	selFrame.selectedElement = nil
@@ -100,3 +101,4 @@ function note:Deselect()
 	-- puts it out of screen
 	-- dont ask me why ClearAllPoints doesnt work on its own
 end
+

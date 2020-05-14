@@ -2,11 +2,11 @@ local eR = elRaidoAddon
 local note = eR.note
 local th = note.toolHandlers
 
-th.selection = {
-	name = 'selection',
+th.Selection = {
+	name = 'Selection',
 }
 
-local tool = th.selection
+local tool = th.Selection
 
 function tool.onEquip(note)
 	print('tool equip')
@@ -22,3 +22,6 @@ function tool.onClick(note)
 
 	note:select(index)
 end
+
+
+th.TEST = {name = "TEST"}

@@ -4,96 +4,137 @@ local note = eR.note
 local UI = note.UI
 local ipairs, pairs, unpack = ipairs, pairs, unpack
 
-local frameBackdrop  = {
-	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-	tile = true, tileSize = 16, edgeSize = 16,
-	insets = { left = 3, right = 3, top = 5, bottom = 3 }
-}
-
---local f = CreateFrame("Frame")
---f:SetSize(500, 500)
---f:SetBackdrop(PaneBackdrop)
-
---f:SetPoint("CENTER")
-UI.selectedNote = nil
-UI.treeInfo = {
-	tree = {},
-	functions = {},
-}
-local info = UI.treeInfo
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 function note:createUI()
-	UI.containerFrame = AceGUI:Create("Frame")
-	local cf = UI.containerFrame 
+	if UI.optionsFrame then 
+		UI.optionsFrame:Hide()
+		return
+	end
 
-	cf:SetTitle("elRaido Notes")
-	cf:SetCallback("OnClose", function(w) AceGUI:Release(w) end)
-	cf:SetLayout("Fill")
-
-	UI.selectionTree = AceGUI:Create("TreeGroup")
-	local st = UI.selectionTree
-	st:SetLayout("Flow")
-	st:SetTree(UI.treeInfo.tree)
-
-	st:SetCallback("OnGroupSelected", function(container, event, group)
-		container:ReleaseChildren()
-		if not UI.treeInfo.functions[group] then
-			eR.log.error(('Tried selection %s tab in note tree, not found')
-				:format(group))
-		else
-			UI.treeInfo.functions[group](container)
-		end
+	UI.optionsFrame = AceGUI:Create("Frame")
+	UI.optionsFrame:SetCallback("OnClose", function(w)
+		AceGUI:Release(w)
+		UI.optionsFrame = nil
+		note:disableEdit()
 	end)
 
-	cf:AddChild(st)
+	UI.refreshNotesWindow(true)
 end
 
+UI.optionsTable = {
+	type = "group",
+	childGroups = "tab",
+	args = {
+		notes = {
+			name = "Notes",
+			type = "group",
+			args = {
+			},
+		}, -- end of notes
 
--- NOTES MAIN THING
-local function noteSelect(button)
-	local noteName = button.noteName
-	UI.selectedNote = noteName
+		temp = {
+			name = "Temp",
+			type = "group",
+			args = {
+				aasdasda = {
+					type = 'description',
+					hidden = function(self)
+						for k,v in pairs(self) do print(k,v) end
+					end,
+					name = 'yo',
+				},
+			},			
+		}, -- end of temp
 
-	if UI.selectionTree then
-		UI.selectionTree:SelectByValue("Notes")
-	end
-
-	print( ('Selecting note called %s'):format(noteName) )
-end
-
-info.tree[#info.tree + 1] = {
-	value = "Notes",
-	text = "Notes",
-	icon = "Interface\\Icons\\INV_Drink_05",
+	}
 }
 
-info.functions["Notes"] = function(container)
-	local notes, tree = note.para.notes, {}
-	local selectedNote = UI.selectedNote
+function UI.refreshNotesWindow(refreshNotes)
 
-	for k,v in pairs(notes) do 
-		local b = AceGUI:Create("InteractiveLabel")
-		b:SetCallback("OnClick", noteSelect)
-		container:AddChild(b)
-		b.noteName = k
-		b:SetFullWidth(true)
-		--b:SetFont("Fonts\\FRIZQT__.TTF", 12)
-		
-		b:SetJustifyV("CENTER")
+	if refreshNotes then note.UI.fillNotes() end
+	AceConfigDialog:Open("elRaidoNotes", UI.optionsFrame)
+end
 
-		local icon = ''
-		if selectedNote and selectedNote == k then
-			icon = eR.constants.TEXTURES.NOTE_FULL_YELLOW
-			b:SetColor(unpack(eR.constants.COLORS.PALE_YELLOW))
-		else
-			icon = eR.constants.TEXTURES.NOTE_FULL_GREY
-		end
-		b:SetHighlight(eR.constants.TEXTURES.ACE_GUI_HIGHLIGHT)
+function UI.applySelectedNote(note)
+	print("Applying selected note", note)
+	if note then UI.selectedNote = note end
+	local note = note or UI.optionsTable
 
+	--UI.refreshNotesWindow() -- no need cause AceGUI does that anyways
 
-		b.highlight:SetVertexColor(unpack(eR.constants.COLORS.BLUE_HIGHLIGHT))
-		b:SetText( ('|T%s:30|t %s'):format(icon, k))
+	-- just refreshes all the gets
+end
 
+UI.selectedNote = nil
+UI.noteArg = {
+	invisible = {
+		type = "description",
+		order = 0,
+		name = "invisible",
+		hidden = function(self)
+			local selected = self[#self - 1]
+			note:enableEdit()
+			if selected 
+				and (not UI.selectedNote or UI.selectedNote~=selected) 
+			then
+				UI.applySelectedNote(selected)
+			end
+			return true
+		end,
+	},
+
+	test = {
+		type = 'description',
+		order = 1,
+		name = function()
+			return UI.selectedNote
+		end,
+	},
+}
+
+local wipe = wipe
+function UI.fillNotes()
+	local args = UI.optionsTable.args.notes.args
+
+	wipe(args)
+	for k,v in pairs(note.para.notes) do 
+		args[k] = {
+			type = "group",
+			name = k,
+			args = UI.noteArg,
+		}
 	end
 end
 
+---------------------------
+------- notes.notes -------
+---------------------------
+
+local args = UI.noteArg
+
+args['toolSelect'] = {
+	name = "Tool",
+	type = "select",
+	style = "dropdown",
+	order = 2,
+	values = function()
+		local a = {}
+		local th = note.toolHandlers
+		for k,v in pairs(th) do 
+			a[k] = k
+		end
+		return a
+	end,
+
+	set = function(self, value)
+
+		note:setTool(value)
+	end,
+
+	get = function(self)
+		local tool = note.tool
+		if not tool then return end
+		return tool.name
+	end,
+}

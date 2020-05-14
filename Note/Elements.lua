@@ -74,7 +74,7 @@ function basicElement:setPoint(x, y)
 	x, y = att.x, att.y
 
 	self.frame:ClearAllPoints()
-	self.frame:SetPoint('CENTER', note.mainFrame, 'BOTTOMLEFT', x, y)
+	self.frame:SetPoint('CENTER', note.mainFrame, 'TOPLEFT', x, y)
 end
 
 function basicElement:setAlpha(a)
@@ -91,7 +91,7 @@ function basicElement:updateCurrentPosition()
 	x, y = x - xf, y - yf
 	local w, h = note.para.mainFrameWidth, note.para.mainFrameHeight
 	x = ((x > w) and w) or ((x < 0) and 0) or x
-	y = ((y > h) and h) or ((y < 0) and 0) or y
+	y = ((-y > h) and -h) or ((y > 0) and 0) or y
 
 	self:setPoint(x, y)
 end
@@ -123,13 +123,13 @@ function basicElement:prepareResize(direction)
 	f:ClearAllPoints()
 
  	if direction == 'TOPLEFT' then
- 		f:SetPoint(oppPoint, note.mainFrame, 'BOTTOMLEFT', x + w/2, y - h/2)
+ 		f:SetPoint(oppPoint, note.mainFrame, 'TOPLEFT', x + w/2, y - h/2)
   	elseif direction == 'TOPRIGHT' then
- 		f:SetPoint(oppPoint, note.mainFrame, 'BOTTOMLEFT', x - w/2, y - h/2)
+ 		f:SetPoint(oppPoint, note.mainFrame, 'TOPLEFT', x - w/2, y - h/2)
  	elseif direction == 'BOTTOMRIGHT' then
- 		f:SetPoint(oppPoint, note.mainFrame, 'BOTTOMLEFT', x - w/2, y + h/2)
+ 		f:SetPoint(oppPoint, note.mainFrame, 'TOPLEFT', x - w/2, y + h/2)
  	elseif direction == 'BOTTOMLEFT' then
- 		f:SetPoint(oppPoint, note.mainFrame, 'BOTTOMLEFT', x + w/2, y + h/2)
+ 		f:SetPoint(oppPoint, note.mainFrame, 'TOPLEFT', x + w/2, y + h/2)
  	end
 
  	self.frame:StartSizing(direction)
