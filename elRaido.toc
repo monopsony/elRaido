@@ -1,6 +1,6 @@
 ## Interface: 70100
 ## Title: elRaido
-## DefaultState: enabled
+## DefaultState: disabled
 ## SavedVariables: elRaidoDB
 
 libs.xml
