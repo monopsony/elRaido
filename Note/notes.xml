@@ -1,15 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 	<Script file="Note\main.lua"/>
-
 	<Script file="Note\Elements.lua"/>
-	<Script file="Note\Elements\elementSquare.lua"/>
-	<Script file="Note\Elements\elementText.lua"/>
-
-	<Script file="Note\Interface.lua"/>
-
-	<Script file="Note\Tools.lua"/>
-	<Script file="Note\Tools\toolSelection.lua"/>
 
 
+	<Script file="Note\Elements\element_square.lua"/>
 </Ui>
