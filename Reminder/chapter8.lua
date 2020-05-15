@@ -12,12 +12,12 @@ function eR.reminder:onInitialize() --this function is not itself you see
 
 
 
-	function reminder:addReminderCLEU(N, subevent, spellName, sourceName, destName, instances, encounter)
+	function reminder:addReminderCLEU(name, subevent, spellName, sourceName, destName, instances, encounter)
 		reminder.registeredSubevent[subevent] = true
 		local reminders = reminder.remindersCLEU
-		print(sourceName or "anySource")
-		reminders[subevent][N] = {[spellName] = true, [sourceName or "anySource"]=true, [destName or "anyDestination"]=true, ["instances"]=instances, ['counter']=0}
+		reminders[subevent][name] = {[spellName] = true, [sourceName or "anySource"]=true, [destName or "anyDestination"]=true, ["instances"]=instances, ['counter']=0}
 		settings.numReminders = settings.numReminders + 1
+		
 	end
 
 	reminder.eventFrame = CreateFrame("frame")
@@ -85,6 +85,9 @@ function eR.reminder:onInitialize() --this function is not itself you see
 	local notTrackedHandler=function()
 		return
 	end
+
+	reminder:generateOptions(); 
+	for name,_ in pairs(settings.names) do print(hi, name);reminder:addReminder(name) end
 end
 
 

@@ -12,7 +12,7 @@ local defaultProfile={
 
 		reminder={ registeredSubevent={},
 				   remindersCLEU = {  },
-				   settings = {numReminders = 0}
+				   settings = {numReminders = 0, names = {}}
 				   },
 
 		note = {
