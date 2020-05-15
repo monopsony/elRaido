@@ -16,48 +16,65 @@ end
 function reminder:addReminder(j)
     local args = reminder.optionsTable.args
     local settings = eR.db.profile.reminder.settings
-    --local num = settings.numReminders
+    --local reminders = eR.reminder.remindersCLEU
     local num = j
-    --print(num)
 
-    args["reminder"..num] = {  name = 'reminder'..num, 
-                             type  = 'group', 
-                             args = { ["subevent"] = {name='subevent', 
-                                                      type = 'select', 
-                                                      values = dropDownTable, 
-                                                      order=1,
-                                                      set = function(info, val) settings["subevent"..num]=val; end,
-                                                      get = function(info)  return settings["subevent"..num];  end},
-                                      ["unitS"] = {name='source unit', 
-                                                       type = 'input', 
-                                                       order=2,
-                                                       set = function(info,val) 
-                                                              settings["unit"..num]=val
-                                                            end,
-                                                      get = function(info) return settings["unit"..num] end},
-                                      ["instances"] = {name='instances', 
-                                                       type = 'input', 
-                                                       order=3,
-                                                       set = function(info,val) 
-                                                              
-                                                              settings["instances"..num]=splitString(val)
-                                                              settings["instancesText"..num]=val
+    args["reminder"..num] = 
 
-                                                            end,
-                                                      get = function(info) return settings["instancesText"..num] end},                                                      
-                                      ["spellname"] = {name='spellName', 
-                                                       type = 'input', 
-                                                       order=4,
-                                                       set = function(info,val) 
-                                                              editBoxString=val 
-                                                              
+    {
+    name = 'reminder'..num, 
+    type  = 'group',
+    order = num, 
+    args = { ["subevent"] = {
+                            name='subevent', 
+                            type = 'select', 
+                            values = dropDownTable, 
+                            order=1,
+                            set = function(info, val) settings["subevent"..num]=val; end,
+                            get = function(info)  return settings["subevent"..num];  end
+                            },
 
-                                                              reminder:addReminderCLEU(num+1, dropDownTable[settings["subevent"..num]], val, nil, nil,settings["instances"..num],false)
-                                                              
-                                                            end,
-                                                       get = function(info) return editBoxString end}
-                            }
-                          }
+            ["unitS"] =     {
+                            name='source unit', 
+                             type = 'input', 
+                             order=2,
+                             set = function(info,val) 
+                                    settings["unit"..num]=val
+                                    if val =="" then settings["unit"..num]=nil end
+                                  end,
+                            get = function(info) return settings["unit"..num] end
+                            },
+
+            ["instances"] = {
+                            name='instances', 
+                            type = 'input', 
+                            order=3,
+                            set = function(info,val) 
+                                settings["instances"..num]=splitString(val)
+                                if val =="" then settings["instances"..num]=nil end
+                                settings["instancesText"..num]=val
+                            end,
+                            get = function(info) return settings["instancesText"..num] end
+                            },      
+
+            ["spellname"] = {
+                            name='spellName', 
+                            type = 'input', 
+                            order=4,
+                            set = function(info,val) 
+                                    local subevent = dropDownTable[settings["subevent"..num]]
+                                    local instances = settings["instances"..num]
+                                    local unit = settings["unit"..num]
+                                    settings["spellName"..num] = val
+                                    reminder:addReminderCLEU(num, subevent, val, unit, nil, instances, false) --adds reminder to reminders[subevent][num]
+                                    for sevent, reminder in pairs(eR.reminder.remindersCLEU) do --deletes any previous reminder #num
+                                      if sevent ~= subevent then reminder[num] = nil end
+                                    end
+                            end,
+                            get = function(info) return settings["spellName"..num] end
+                            },
+        } --end of args
+    }-- end of args["reminder"..num]
 end
 
 function reminder:generateOptions()

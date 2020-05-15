@@ -11,7 +11,7 @@ local defaultProfile={
 
 
 		reminder={ registeredSubevent={},
-				   remindersCLEU = { numReminders = 0, },
+				   remindersCLEU = {  },
 				   settings = {numReminders = 0}
 				   },
 
@@ -57,7 +57,7 @@ function eR:OnInitialize()
 
 	local AceConfig = LibStub("AceConfig-3.0")
 	self.db=LibStub("AceDB-3.0"):New("elRaidoDB", defaultProfile, true) 
-
+	self.para=self.db.profile
 	--true sets the default profile to a profile called "Default"
 	--see https://www.wowace.com/projects/ace3/pages/api/ace-db-3-0
 	
@@ -65,7 +65,8 @@ function eR:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
 	
-
+	-- reminder
+	self.reminder:onInitialize()
 
 
 	-- note
@@ -82,7 +83,7 @@ end
 
 local chat_commands={
 	["help"]=function(self, msg)
-		eR.log.user_message("help")
+		eR.log.userMessage("help")
 	end,
 
 	["metatable"]={__index=function(self,key) return self["help"] end},
