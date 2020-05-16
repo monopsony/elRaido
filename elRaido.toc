@@ -1,6 +1,6 @@
 ## Interface: 70100
 ## Title: elRaido
-## DefaultState: enabled
+## DefaultState: disabled
 ## SavedVariables: elRaidoDB
 
 libs.xml
@@ -9,3 +9,4 @@ Utils.lua
 
 
 Note/notes.xml
+Reminder/reminder.xml
