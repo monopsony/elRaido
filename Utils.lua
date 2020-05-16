@@ -135,6 +135,20 @@ function utils:showHideBorder(boo)
 	end
 end
 
+function utils.tablePop(tbl, i)
+	if (not tbl) then return end
+	local n = #tbl
+	if i > n then return end
+
+	local el = tbl[i]
+
+	for j = i+1, n do
+		tbl[j-1] = tbl[j]
+	end
+	tbl[n] = nil
+
+	return el
+end
 
 -- DEFINE LOG BASED THINGS
 

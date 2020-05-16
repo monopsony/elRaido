@@ -110,9 +110,9 @@ function el:saveText()
 end
 
 function el:setDisplayMode()
-	self:ClearFocus()
-	self:SetText()
-	self:Lower()
+	self:clearFocus()
+	self:setText()
+	self:lower()
 end
 
 function el:setEditMode()
@@ -120,7 +120,7 @@ function el:setEditMode()
 	self.textPrevious = text
 	self.frame.text:SetText(text:gsub('|', '||'))
 	self.frame.text:SetFocus()
-	self:Raise()
+	self:raise()
 end
 
 function el:toggleEdit(boo)

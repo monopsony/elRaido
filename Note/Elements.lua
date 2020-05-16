@@ -2,6 +2,7 @@ local eR=elRaidoAddon
 local note = eR.note
 local bps = note.elementBlueprints
 local tUpdate, tDeepCopy = eR.utils.tableUpdate, eR.utils.tableDeepCopy
+local tPop = eR.utils.tablePop
 
 local basicAttributes = {
 	x = 0,
@@ -11,15 +12,15 @@ local basicAttributes = {
 	colorB = 1,
 	alpha = 1,
 	typ = nil,
-	w = 20,
-	h = 20,
+	w = 50,
+	h = 50,
 }
 
 local basicElement = {
 }
 
 note.activeElements = {}
-note.binnedElements = {}
+note.recycledElements = {}
 function note:createElement(typ, att)
 	if not typ then
 		eR.log.error('In createElement: No type given.')
@@ -35,8 +36,10 @@ function note:createElement(typ, att)
 	el.frame = CreateFrame('Frame', nil, self.mainFrame)
 	el.frame:SetMovable(true)
 	el.frame:SetResizable(true)
-	el.attributes = tDeepCopy(basicAttributes)
-	tUpdate(el.attributes, bp.extraAttributes)
+	el.attributes = att or tDeepCopy(basicAttributes)
+	if not att then
+		tUpdate(el.attributes, bp.extraAttributes)
+	end
 
 	setmetatable(el, {
 		__index = function(self, key)
@@ -46,7 +49,7 @@ function note:createElement(typ, att)
 				('Tried accessing element key %s, none found'):format(key))
 			return nil
 		end
-	})
+	}) 
 
 	-- fill in attributes given as arg
 	if att then tUpdate(el.attributes, att) end
@@ -55,9 +58,52 @@ function note:createElement(typ, att)
 	el:init()
 	el:applyAttributes()
 
-	note.activeElements[#note.activeElements + 1] = el
+	print("created Element, x=",el.attributes.x)
 
+	note.activeElements[#note.activeElements + 1] = el
 	return el 
+end
+
+function note:saveElement(el)
+	if (not el) or (not el.attributes) then return end
+	local noteName = self.UI.selectedNote
+	if (not noteName) or not self.para.notes[noteName] then return end
+	local para = self.para.notes[noteName]
+
+	print('saving element, x=',el.attributes.x)
+	para[#para + 1] = el.attributes
+end
+
+function note:createElementsFromPara(noteName)
+	if (not noteName) or not self.para.notes[noteName] then return end
+	local para = self.para.notes[noteName]
+	for k,v in pairs(para) do 
+		local typ = v.typ
+		if typ then
+			self:createElement(typ, v)
+		end -- end of if typ then
+	end -- end of pairs(para)
+
+end
+
+function note:recycleAllElements()
+	local n = #self.activeElements
+	for i = n, 1, -1 do
+		self:recycleElement(i)
+	end
+end
+
+function note:recycleElement(i)
+	local n = #self.activeElements
+	if (not i) or (i > n) then return end
+
+	local el = tPop(note.activeElements, i)
+
+	if i == (self.selectedIndex or -1) then self:deselect() end
+
+	self.recycledElements[#self.recycledElements + 1] = el
+
+	el:recycle()
 end
 
 function basicElement:setSize(w, h)
@@ -86,7 +132,7 @@ end
 
 function basicElement:updateCurrentPosition()
 	local x, y = self.frame:GetCenter()
-	local xf, yf = note:GetMainFramePosition()
+	local xf, yf = note:getMainFramePosition()
 
 	x, y = x - xf, y - yf
 	local w, h = note.para.mainFrameWidth, note.para.mainFrameHeight
@@ -138,4 +184,25 @@ end
 function basicElement:toggleEdit()
 	-- just replace it in the element_file if needed
 	-- baseline many elements are not interactible anyways 
+end
+
+function basicElement:recycle()
+	self.frame:Hide()
+end
+
+function basicElement:doubleClick()
+	print('basicElement:doubleClick')
+	-- this gets called only when the element doesnt overwrite it
+	note.mainFrameClickHandler:Click("LeftButton")
+end
+
+function basicElement:shiftClick()
+	print('basicElement:shiftClick')
+	-- this gets called only when the element doesnt overwrite it
+	note.mainFrameClickHandler:Click("LeftButton")
+end
+
+function basicElement:rightClick()
+	-- this gets called only when the element doesnt overwrite it
+	note:deselect()
 end

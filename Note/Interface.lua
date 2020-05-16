@@ -51,19 +51,17 @@ UI.optionsTable = {
 }
 
 function UI.refreshNotesWindow(refreshNotes)
-
+	print('Manually refresing')
 	if refreshNotes then note.UI.fillNotes() end
 	AceConfigDialog:Open("elRaidoNotes", UI.optionsFrame)
 end
 
-function UI.applySelectedNote(note)
-	print("Applying selected note", note)
-	if note then UI.selectedNote = note end
-	local note = note or UI.optionsTable
+function UI.applySelectedNote(noteName)
+	print("Applying selected noteName", noteName)
+	if noteName then UI.selectedNote = noteName end
+	local noteName = noteName or UI.optionsTable
 
-	--UI.refreshNotesWindow() -- no need cause AceGUI does that anyways
-
-	-- just refreshes all the gets
+	note:showNote(noteName)
 end
 
 UI.selectedNote = nil
@@ -137,4 +135,29 @@ args['toolSelect'] = {
 		if not tool then return end
 		return tool.name
 	end,
+}
+
+args['heading1'] = {
+	type = 'header',
+	name = '',
+	order = 10,
+}
+
+-- note.toolParas
+args['color'] = {
+	order = 11,
+	type = 'color',
+	name = 'Color',
+	hasAlpha = true,
+	get = function()
+		local p = note.toolParas
+		local r, g, b, a = p.colorR, p.colorG, p.colorB, p.alpha
+		return r, g, b, a
+	end,
+	set = function(_, r, g, b, a)
+		local p = note.toolParas
+		p.colorR, p.colorG, p.colorB, p.alpha = r, g, b, a or p.alpha
+		note:applySelectionAttributeChange()
+	end,
+
 }

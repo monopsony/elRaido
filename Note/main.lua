@@ -3,6 +3,7 @@ local eR = elRaidoAddon
 eR.note = {
 	elementBlueprints = {},
 	UI = {},
+	shownNote = nil,
 }
 
 local note = eR.note
@@ -33,7 +34,13 @@ function note:createMainFrame()
 	local ch = note.mainFrameClickHandler
 	ch:SetAllPoints()
 	ch:SetFrameLevel(note.mainFrame:GetFrameLevel() + 10)
-	ch:SetScript('OnClick', function(ch, ...) note:click(...) end)
+	ch:SetScript('OnClick', function(ch, ...) 
+		if IsShiftKeyDown() then
+			note:shiftClick(...)
+		else
+			note:click(...) 
+		end
+	end)
 	ch:SetScript('OnDoubleClick', function(ch, ...) note:doubleClick(...) end)
 
 	ch:RegisterForClicks("AnyUp")
@@ -46,7 +53,7 @@ function note:createMainFrame()
 	--note:createToolbox()
 end
 
-function note:GetMainFramePosition()
+function note:getMainFramePosition()
 	local x, y = self.mainFrame:GetLeft(), self.mainFrame:GetTop()
 	return x, y
 end
@@ -69,6 +76,15 @@ local function sizerOnDragStop(sizer)
 	el:updateCurrentSize()
 end
 
+function note:showNote(noteName)
+	self.shownNote = noteName
+	print('gonna show note',noteName)
+	self:recycleAllElements()
+
+	if self.shownNote then
+		self:createElementsFromPara(noteName)
+	end
+end
 
 function note:createSelectionFrame()
 	self.selectionFrame = CreateFrame(
@@ -78,6 +94,7 @@ function note:createSelectionFrame()
 	sf:SetFrameLevel(note.mainFrameClickHandler:GetFrameLevel() + 1)
 	eR.utils.applyBorderToFrame(sf)
 
+	sf:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	sf:RegisterForDrag("LeftButton")
 	sf:SetScript("OnDragStart", function(sf) 
 		sf.selectedElement.frame:StartMoving() 
@@ -86,10 +103,22 @@ function note:createSelectionFrame()
 		sf.selectedElement.frame:StopMovingOrSizing()
 		sf.selectedElement:updateCurrentPosition()
 	end)
-	sf:SetScript('OnClick', function(sf)
+	sf:SetScript('OnClick', function(sf, button,a,b,c)
 		local el = sf.selectedElement
 		if not el then return end
-		if el.doubleClick then el:doubleClick() end
+
+		if button == 'RightButton' then 
+			if el.rightClick then el.rightClick() end
+			return
+		elseif button == 'LeftButton' then
+			if IsShiftKeyDown() and el.shiftClick then 
+				el.shiftClick()
+			elseif el.doubleClick then 
+				el:doubleClick() 
+			end
+			return	
+		end
+
 	end)
 
 
@@ -137,7 +166,6 @@ function note:enableEdit()
 	note.selectionFrame:Show()
 	note.mainFrame.border:Show()
 	note:attachToOptionsFrame()
-
 end
 
 function note:resetPosition()

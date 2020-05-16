@@ -10,6 +10,7 @@
 
 	<Script file="Note\Tools.lua"/>
 	<Script file="Note\Tools\toolSelection.lua"/>
-
+	<Script file="Note\Tools\toolRectangle.lua"/>
+	<Script file="Note\Tools\toolText.lua"/>
 
 </Ui>
