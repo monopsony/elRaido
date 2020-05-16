@@ -86,6 +86,15 @@ local chat_commands={
 		eR.log.userMessage("help")
 	end,
 
+	["notes"] = function(self, msg)
+		local UI = eR.note.UI
+		if UI.containerFrame and UI.containerFrame:IsShown() then
+			eR.note.UI.containerFrame:Hide()
+		else
+			eR.note.createUI()
+		end
+	end,
+	
 	["metatable"]={__index=function(self,key) return self["help"] end},
 }
 setmetatable(chat_commands,chat_commands.metatable)
