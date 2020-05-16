@@ -21,7 +21,7 @@ local basicElement = {
 
 note.activeElements = {}
 note.recycledElements = {}
-function note:createElement(typ, att, from_para)
+function note:createElement(typ, att, fromPara)
 	if not typ then
 		eR.log.error('In createElement: No type given.')
 		return 
@@ -31,12 +31,32 @@ function note:createElement(typ, att, from_para)
 		return 
 	end
 
+	local recycledElement = self:fetchRecycledElement(typ)
 	local bp, be = bps[typ], basicElement
-	local el = {}
-	el.frame = CreateFrame('Frame', nil, self.mainFrame)
-	el.frame:SetMovable(true)
-	el.frame:SetResizable(true)
-	if from_para then
+	local el
+	if recycledElement then
+		el = recycledElement
+		el.frame:Show()
+	else
+		el = {}
+		el.frame = CreateFrame('Frame', nil, self.mainFrame)
+		el.frame:SetMovable(true)
+		el.frame:SetResizable(true)
+
+		setmetatable(el, {
+			__index = function(self, key)
+				if bp[key] then return bp[key] end
+				if be[key] then return be[key] end
+				eR.log.error(
+					('Tried accessing element key %s, none found'):format(key))
+				return nil
+			end
+		}) 
+
+		el:init()
+	end
+
+	if fromPara then
 		el.attributes = att 
 	else
 		el.attributes = tDeepCopy(basicAttributes)
@@ -44,25 +64,24 @@ function note:createElement(typ, att, from_para)
 		tUpdate(el.attributes, att)
 	end
 
-	setmetatable(el, {
-		__index = function(self, key)
-			if bp[key] then return bp[key] end
-			if be[key] then return be[key] end
-			eR.log.error(
-				('Tried accessing element key %s, none found'):format(key))
-			return nil
-		end
-	}) 
-
-
 	-- initialise element
-	el:init()
 	el:applyAttributes()
 
 	print("created Element, x=",el.attributes.x)
 
 	note.activeElements[#note.activeElements + 1] = el
 	return el 
+end
+
+function note:fetchRecycledElement(typ)
+	if not typ then return end
+	for i, v in ipairs(self.recycledElements) do
+		if v.attributes.typ == typ then
+			local el = tPop(self.recycledElements, i)
+			return el
+		end
+	end
+	return nil
 end
 
 function note:saveElement(el)
