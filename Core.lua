@@ -7,10 +7,14 @@ eR.version='0.1'
 
 local defaultProfile={
 	profile={
+
+
+
 		reminder={ registeredSubevent={},
-				   remindersCLEU = { numReminders = 0, },
-				   settings = {numReminders = 0}
+				   remindersCLEU = {  },
+				   settings = {numReminders = 0, names = {}}
 				   },
+
 		note = {
 			mainFrameWidth = 500,
 			mainFrameHeight = 500,
@@ -42,6 +46,7 @@ local defaultProfile={
 		}, -- end of note
 
 
+
 	},-- end of profile
 }--end of default
 
@@ -49,17 +54,19 @@ local defaultProfile={
 
 function eR:OnInitialize()
 
+
 	local AceConfig = LibStub("AceConfig-3.0")
 	self.db=LibStub("AceDB-3.0"):New("elRaidoDB", defaultProfile, true) 
+	self.para=self.db.profile
 	--true sets the default profile to a profile called "Default"
 	--see https://www.wowace.com/projects/ace3/pages/api/ace-db-3-0
 	
-	self.para = self.db.profile
 	self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
 	
-	
+	-- reminder
+	self.reminder:onInitialize()
 
 
 	-- note
@@ -69,34 +76,27 @@ function eR:OnInitialize()
 	self.note:createSelectionFrame()
 	--self.note:createUI() -- It's AceGUI so you need to do it everytime
 
+
 end
 
 
-local chatCommand = {
-	["help"] = function(self, msg)
+
+local chat_commands={
+	["help"]=function(self, msg)
 		eR.log.userMessage("help")
 	end,
 
-	["notes"] = function(self, msg)
-		local UI = eR.note.UI
-		if UI.containerFrame and UI.containerFrame:IsShown() then
-			eR.note.UI.containerFrame:Hide()
-		else
-			eR.note.createUI()
-		end
-	end,
-
-	["metatable"] = {__index=function(self,key) return self["help"] end},
+	["metatable"]={__index=function(self,key) return self["help"] end},
 }
-setmetatable(chatCommand,chatCommand.metatable)
+setmetatable(chat_commands,chat_commands.metatable)
 
 
-function eR:chatCommandHandler(msg)
+function eR:chat_command_handler(msg)
 	local key=self:GetArgs(msg,1)
-	if (not key) or (key=='metatable') then chatCommand["help"]() 
-	else chatCommand[key](self,msg) end
+	if (not key) or (key=='metatable') then chat_commands["help"]() 
+	else chat_commands[key](self,msg) end
 end
-eR:RegisterChatCommand("elraido","chatCommandHandler")
+eR:RegisterChatCommand("elraido","chat_command_handler")
 
 function eR:RefreshConfig()
 	ReloadUI()
@@ -106,13 +106,13 @@ function eR:OnEnable()
 	-- pass		
 end
 
-local eventFrame=CreateFrame('Frame','elRaidoGlobalEventFrame',UIParent)
-local registeredEvents={'PLAYER_ENTERING_WORLD'}
-for k,v in pairs(registeredEvents) do eventFrame:RegisterEvent(v) end
-function eventFrame:handleEvent(event,...)
+local event_frame=CreateFrame('Frame','elRaidoGlobalEventFrame',UIParent)
+local registered_events={'PLAYER_ENTERING_WORLD'}
+for k,v in pairs(registered_events) do event_frame:RegisterEvent(v) end
+function event_frame:handle_event(event,...)
 	-- handle main events here
 end
-eventFrame:SetScript('OnEvent',eventFrame.handleEvent)
+event_frame:SetScript('OnEvent',event_frame.handle_event)
 
 
 
