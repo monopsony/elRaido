@@ -21,7 +21,7 @@ local basicElement = {
 
 note.activeElements = {}
 note.recycledElements = {}
-function note:createElement(typ, att)
+function note:createElement(typ, att, from_para)
 	if not typ then
 		eR.log.error('In createElement: No type given.')
 		return 
@@ -36,9 +36,12 @@ function note:createElement(typ, att)
 	el.frame = CreateFrame('Frame', nil, self.mainFrame)
 	el.frame:SetMovable(true)
 	el.frame:SetResizable(true)
-	el.attributes = att or tDeepCopy(basicAttributes)
-	if not att then
+	if from_para then
+		el.attributes = att 
+	else
+		el.attributes = tDeepCopy(basicAttributes)
 		tUpdate(el.attributes, bp.extraAttributes)
+		tUpdate(el.attributes, att)
 	end
 
 	setmetatable(el, {
@@ -51,8 +54,6 @@ function note:createElement(typ, att)
 		end
 	}) 
 
-	-- fill in attributes given as arg
-	if att then tUpdate(el.attributes, att) end
 
 	-- initialise element
 	el:init()
@@ -80,10 +81,9 @@ function note:createElementsFromPara(noteName)
 	for k,v in pairs(para) do 
 		local typ = v.typ
 		if typ then
-			self:createElement(typ, v)
+			self:createElement(typ, v, true)
 		end -- end of if typ then
 	end -- end of pairs(para)
-
 end
 
 function note:recycleAllElements()

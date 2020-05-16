@@ -109,7 +109,7 @@ function reminder:generateOptions()
        }
     }
     
-AceConfig:RegisterOptionsTable('elRaido',reminder.optionsTable)
+    AceConfig:RegisterOptionsTable('elRaido',reminder.optionsTable)
 end
 
 
