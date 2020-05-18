@@ -5,6 +5,7 @@
 	<Script file="Note\Elements.lua"/>
 	<Script file="Note\Elements\elementSquare.lua"/>
 	<Script file="Note\Elements\elementText.lua"/>
+	<Script file="Note\Elements\elementTable.lua"/>
 
 	<Script file="Note\Interface.lua"/>
 
@@ -12,5 +13,6 @@
 	<Script file="Note\Tools\toolSelection.lua"/>
 	<Script file="Note\Tools\toolRectangle.lua"/>
 	<Script file="Note\Tools\toolText.lua"/>
+	<Script file="Note\Tools\toolTable.lua"/>
 
 </Ui>

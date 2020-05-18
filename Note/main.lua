@@ -78,7 +78,6 @@ end
 
 function note:showNote(noteName)
 	self.shownNote = noteName
-	print('gonna show note',noteName)
 	self:recycleAllElements()
 
 	if self.shownNote then

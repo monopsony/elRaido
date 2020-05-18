@@ -96,7 +96,6 @@ function note:findMouseoverElement(reverse)
 end
 
 function note:select(i)
-	print('selecting element',i)
 	local i, el = i, nil
 
 	-- is i an index?

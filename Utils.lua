@@ -73,14 +73,21 @@ function utils.tableDeepCopy(ori)
 	return copy
 end
 
-function utils.tableUpdate(ori, new)
+function utils.tableUpdate(ori, new, stop)
 	--[[
 	Adds all non-table elements of table 'new' to table 'ori' 
+	(Corr: adds up to second level tables)
 	Function works inplace but also returns ori for simplicity
 	]]--
+	--if stop = true that means dont copy tables (second level)
 
 	for k,v in pairs(new) do
-		if not (type(v) == 'table') then
+		if (type(v) == 'table') then
+			if not stop then 
+				ori[k] = {}
+				utils.tableUpdate(ori[k], v, true)
+			end
+		else 
 			ori[k] = v
 		end
 	end
@@ -148,6 +155,16 @@ function utils.tablePop(tbl, i)
 	tbl[n] = nil
 
 	return el
+end
+
+function utils.textFormatDisplay(s)
+	if not s then s = '' end
+	return s:gsub('||', '|')
+end
+
+function utils.textFormatEdit(s)
+	if not s then s = '' end
+	return s:gsub('|', '||')
 end
 
 -- DEFINE LOG BASED THINGS

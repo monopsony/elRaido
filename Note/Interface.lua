@@ -51,13 +51,11 @@ UI.optionsTable = {
 }
 
 function UI.refreshNotesWindow(refreshNotes)
-	print('Manually refresing')
 	if refreshNotes then note.UI.fillNotes() end
 	AceConfigDialog:Open("elRaidoNotes", UI.optionsFrame)
 end
 
 function UI.applySelectedNote(noteName)
-	print("Applying selected noteName", noteName)
 	if noteName then UI.selectedNote = noteName end
 	local noteName = noteName or UI.optionsTable
 
@@ -136,6 +134,19 @@ args['toolSelect'] = {
 		return tool.name
 	end,
 }
+
+args['deleteElement'] = {
+	name = 'Delete',
+	type = 'execute',
+	order = 3,
+	hidden = function()
+		if not note.tool then return true end
+		return note.tool.name ~= 'Selection'
+	end,
+	func = function()
+		note:deleteSelectedElement()
+	end,
+}	
 
 args['heading1'] = {
 	type = 'header',

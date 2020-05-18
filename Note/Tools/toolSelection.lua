@@ -11,7 +11,7 @@ local tool = th.Selection
 
 
 function tool.onEquip(note)
-	print('tool equip')
+
 end
 
 function tool.onClick(note)

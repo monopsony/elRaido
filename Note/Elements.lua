@@ -67,7 +67,6 @@ function note:createElement(typ, att, fromPara)
 	-- initialise element
 	el:applyAttributes()
 
-	print("created Element, x=",el.attributes.x)
 
 	note.activeElements[#note.activeElements + 1] = el
 	return el 
@@ -90,7 +89,6 @@ function note:saveElement(el)
 	if (not noteName) or not self.para.notes[noteName] then return end
 	local para = self.para.notes[noteName]
 
-	print('saving element, x=',el.attributes.x)
 	para[#para + 1] = el.attributes
 end
 
@@ -110,6 +108,21 @@ function note:recycleAllElements()
 	for i = n, 1, -1 do
 		self:recycleElement(i)
 	end
+end
+
+function note:deleteSelectedElement()
+	local i = self.selectedIndex
+	if not i then
+		eR.log.error('No element selected that can be deleted')
+		return
+	end
+	local noteName = self.UI.selectedNote
+	if (not noteName) or not self.para.notes[noteName] then return end
+	local para = self.para.notes[noteName]
+
+	tPop(para, i)
+	self:recycleElement(i)
+
 end
 
 function note:recycleElement(i)
@@ -210,13 +223,11 @@ function basicElement:recycle()
 end
 
 function basicElement:doubleClick()
-	print('basicElement:doubleClick')
 	-- this gets called only when the element doesnt overwrite it
 	note.mainFrameClickHandler:Click("LeftButton")
 end
 
 function basicElement:shiftClick()
-	print('basicElement:shiftClick')
 	-- this gets called only when the element doesnt overwrite it
 	note.mainFrameClickHandler:Click("LeftButton")
 end

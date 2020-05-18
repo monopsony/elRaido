@@ -1,6 +1,7 @@
 local eR = elRaidoAddon
 local note = eR.note
 local bps = note.elementBlueprints
+local fEdit, fDisplay = eR.utils.textFormatEdit, eR.utils.textFormatDisplay
 
 bps.text = {}
 local el = bps.text
@@ -106,7 +107,7 @@ end
 
 function el:saveText()
 	local t = self.frame.text:GetText()
-	self.attributes.text = t:gsub('||', '|')
+	self.attributes.text = fDisplay(t)
 end
 
 function el:setDisplayMode()
@@ -118,7 +119,7 @@ end
 function el:setEditMode()
 	local text = self.attributes.text
 	self.textPrevious = text
-	self.frame.text:SetText(text:gsub('|', '||'))
+	self.frame.text:SetText(fEdit(text))
 	self.frame.text:SetFocus()
 	self:raise()
 end
